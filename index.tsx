@@ -62,7 +62,7 @@ export function id(): bigint {
     timestamp = idLastTimestamp
   } else {
     idLastTimestamp = timestamp
-    randomFillSync(idLastBuffer)
+    randomFillSync(idLastBuffer as any)
   }
 
   // Increment the u80 in idLastBuffer using carry arithmetic on u32s (as JS doesn't have fast u64).
