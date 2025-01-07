@@ -8,6 +8,24 @@ const client = createClient({
 
 console.log(client)
 
+const account = {
+    id: id(), // TigerBeetle time-based ID.
+    debits_pending: 0n,
+    debits_posted: 0n,
+    credits_pending: 0n,
+    credits_posted: 0n,
+    user_data_128: 0n,
+    user_data_64: 0n,
+    user_data_32: 0,
+    reserved: 0,
+    ledger: 1,
+    code: 718,
+    flags: 0,
+    timestamp: 0n,
+  };
+  
+  const account_errors = await client.createAccounts([account]);
+
 const accounts = await client.lookupAccounts();
 
 console.log(accounts)
