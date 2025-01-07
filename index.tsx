@@ -46,7 +46,7 @@ const account_errors = await client.createAccounts([account1, account2]);
 // const accounts = await client.lookupAccounts([1n]);
 
 let idLastTimestamp = 0;
-let idLastBuffer = new DataView(new ArrayBuffer(16));
+let idLastBuffer = new ArrayBuffer(16);
 
 /**
  * Generates a Universally Unique and Sortable Identifier as a u128 bigint.
@@ -65,25 +65,27 @@ export function id(): bigint {
     randomFillSync(idLastBuffer as any)
   }
 
+  const idLastBufferDv = new DataView(idLastBuffer);
+
   // Increment the u80 in idLastBuffer using carry arithmetic on u32s (as JS doesn't have fast u64).
   const littleEndian = true
-  const randomLo32 = idLastBuffer.getUint32(0, littleEndian) + 1
-  const randomHi32 = idLastBuffer.getUint32(4, littleEndian) + (randomLo32 > 0xFFFFFFFF ? 1 : 0)
-  const randomHi16 = idLastBuffer.getUint16(8, littleEndian) + (randomHi32 > 0xFFFFFFFF ? 1 : 0)
+  const randomLo32 = idLastBufferDv.getUint32(0, littleEndian) + 1
+  const randomHi32 = idLastBufferDv.getUint32(4, littleEndian) + (randomLo32 > 0xFFFFFFFF ? 1 : 0)
+  const randomHi16 = idLastBufferDv.getUint16(8, littleEndian) + (randomHi32 > 0xFFFFFFFF ? 1 : 0)
   if (randomHi16 > 0xFFFF) {
     throw new Error('random bits overflow on monotonic increment')
   }
 
   // Store the incremented random monotonic and the timestamp into the buffer.
-  idLastBuffer.setUint32(0, randomLo32 & 0xFFFFFFFF, littleEndian)
-  idLastBuffer.setUint32(4, randomHi32 & 0xFFFFFFFF, littleEndian)
-  idLastBuffer.setUint16(8, randomHi16, littleEndian) // No need to mask since checked above.
-  idLastBuffer.setUint16(10, timestamp & 0xFFFF, littleEndian) // timestamp lo.
-  idLastBuffer.setUint32(12, (timestamp >>> 16) & 0xFFFFFFFF, littleEndian) // timestamp hi.
+  idLastBufferDv.setUint32(0, randomLo32 & 0xFFFFFFFF, littleEndian)
+  idLastBufferDv.setUint32(4, randomHi32 & 0xFFFFFFFF, littleEndian)
+  idLastBufferDv.setUint16(8, randomHi16, littleEndian) // No need to mask since checked above.
+  idLastBufferDv.setUint16(10, timestamp & 0xFFFF, littleEndian) // timestamp lo.
+  idLastBufferDv.setUint32(12, (timestamp >>> 16) & 0xFFFFFFFF, littleEndian) // timestamp hi.
 
   // Then return the buffer's contents as a little-endian u128 bigint.
-  const lo = idLastBuffer.getBigUint64(0, littleEndian)
-  const hi = idLastBuffer.getBigUint64(8, littleEndian)
+  const lo = idLastBufferDv.getBigUint64(0, littleEndian)
+  const hi = idLastBufferDv.getBigUint64(8, littleEndian)
   return (hi << 64n) | lo
 }
 
