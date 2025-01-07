@@ -1,0 +1,100 @@
+{
+    "apiVersion": "v1.2",
+    "spec": {
+      "kind": "Workflow",
+      "spec": {
+        "type": "sequential",
+        "steps": [
+          {
+            "kind": "DeploymentService",
+            "spec": {
+              "name": "tigerbeetle",
+              "projectId": "data",
+              "billing": {
+                "deploymentPlan": "nf-compute-200-8"
+              },
+              "deployment": {
+                "instances": 1,
+                "docker": {
+                  "configType": "customCommand",
+                  "customCommand": "start --addresses=0.0.0.0:3000 /data/0_0.tigerbeetle"
+                },
+                "external": {
+                  "imagePath": "ghcr.io/tigerbeetle/tigerbeetle:latest"
+                },
+                "metadata": {
+                  "labels": {},
+                  "annotations": {}
+                }
+              },
+              "ports": [
+                {
+                  "name": "p01",
+                  "internalPort": 3000,
+                  "security": {
+                    "verificationMode": "or",
+                    "securePathConfiguration": {
+                      "rules": []
+                    }
+                  },
+                  "protocol": "TCP"
+                }
+              ]
+            }
+          },
+          {
+            "kind": "CombinedService",
+            "spec": {
+              "name": "api",
+              "projectId": "data",
+              "billing": {
+                "buildPlan": "nf-compute-400-16",
+                "deploymentPlan": "nf-compute-50"
+              },
+              "deployment": {
+                "instances": 1,
+                "metadata": {
+                  "labels": {},
+                  "annotations": {}
+                }
+              },
+              "ports": [
+                {
+                  "name": "p01",
+                  "internalPort": 3000,
+                  "public": true,
+                  "security": {
+                    "verificationMode": "or",
+                    "securePathConfiguration": {
+                      "rules": []
+                    }
+                  },
+                  "protocol": "HTTP"
+                }
+              ],
+              "buildSource": "git",
+              "vcsData": {
+                "projectUrl": "https://github.com/northflank/tigerbeetle-bun",
+                "projectType": "github",
+                "projectBranch": "main",
+                "accountLogin": "northflank"
+              },
+              "buildSettings": {
+                "dockerfile": {
+                  "buildEngine": "kaniko",
+                  "useCache": false,
+                  "dockerFilePath": "/Dockerfile",
+                  "dockerWorkDir": "/"
+                }
+              },
+              "runtimeEnvironment": {
+                "TB_ADDRESS": "10.16.29.38",
+                "PORT": "3000",
+                "TIGERBEETLE_CLUSTER_ID": "0"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
