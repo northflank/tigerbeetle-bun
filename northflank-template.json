@@ -31,7 +31,7 @@
                   "priority": 10,
                   "secrets": {
                     "variables": {
-                      "DATA_FOLDER": "/",
+                      "DATA_FOLDER": "/data",
                       "TOTAL_REPLICAS": "3",
                       "ORDERED_REPLICAS": "tb01,tb02,tb03"
                     },
