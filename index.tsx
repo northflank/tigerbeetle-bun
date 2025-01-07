@@ -11,6 +11,7 @@ const hostnames = TB_ADDRESSES.split(",");
 const addresses = (await Promise.all(hostnames.map(async (hostname) => {
   const ip = await resolve4(hostname);
 
+  console.log(hostname, ip);
   if (ip.length > 1) {
     return `${ip[0]}:${TB_PORT}`;
   }
