@@ -9,7 +9,7 @@ const client = createClient({
 console.log(client)
 
 const account = {
-    id: id(), // TigerBeetle time-based ID.
+    id: 1n, // TigerBeetle time-based ID.
     debits_pending: 0n,
     debits_posted: 0n,
     credits_pending: 0n,
@@ -26,7 +26,7 @@ const account = {
   
 const account_errors = await client.createAccounts([account]);
 
-const accounts = await client.lookupAccounts([account.id]);
+const accounts = await client.lookupAccounts([1n]);
 
 console.log(accounts)
 
