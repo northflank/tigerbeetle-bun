@@ -111,7 +111,8 @@ const server = Bun.serve({
         };
         const txs = await client.getAccountTransfers(filter);
 
-        return Response.json(txs);
+        const txsj = JSON.stringify(txs, (_, v) => typeof v === 'bigint' ? v.toString() : v);
+        return Response.json(txsj);
       };
   
       if (path === "/trx") {
