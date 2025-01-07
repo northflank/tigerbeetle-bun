@@ -13,11 +13,13 @@ const addresses = (await Promise.all(hostnames.map(async (hostname) => {
 
   console.log(hostname, ip);
   if (ip.length > 1) {
-    return `${ip[0]}:${TB_PORT}`;
+    return [`${ip[0]}:${TB_PORT}`];
   }
 
   return [];
 }))).flatMap((i) => i);
+
+console.log(addresses);
 
 const client = createClient({
     cluster_id: 0n,
