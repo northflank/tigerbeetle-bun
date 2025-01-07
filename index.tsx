@@ -24,9 +24,9 @@ const account = {
     timestamp: 0n,
   };
   
-  const account_errors = await client.createAccounts([account]);
+const account_errors = await client.createAccounts([account]);
 
-const accounts = await client.lookupAccounts();
+const accounts = await client.lookupAccounts([account.id]);
 
 console.log(accounts)
 
