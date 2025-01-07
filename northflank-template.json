@@ -52,23 +52,18 @@
               {
                 "kind": "DeploymentService",
                 "spec": {
-                  "name": "tb-single",
-                  "projectId": "tigerbeetle",
-                  "billing": {
-                    "deploymentPlan": "nf-compute-200"
-                  },
                   "deployment": {
                     "instances": 1,
+                    "storage": {
+                      "ephemeralStorage": {
+                        "storageSize": 1024
+                      },
+                      "shmSize": 64
+                    },
                     "docker": {
                       "configType": "customEntrypointCustomCommand",
                       "customEntrypoint": "ash -c",
                       "customCommand": "\"chmod +x /init.sh && /init.sh\""
-                    },
-                    "storage": {
-                      "ephemeralStorage": {
-                        "storageSize": 5120
-                      },
-                      "shmSize": 64
                     },
                     "external": {
                       "imagePath": "ghcr.io/tigerbeetle/tigerbeetle:latest"
@@ -77,6 +72,11 @@
                       "labels": {},
                       "annotations": {}
                     }
+                  },
+                  "name": "tb-single",
+                  "projectId": "tigerbeetle",
+                  "billing": {
+                    "deploymentPlan": "nf-compute-200"
                   },
                   "ports": [
                     {
@@ -88,15 +88,42 @@
                         "policies": [],
                         "sso": {}
                       },
-                      "domains": []
+                      "domains": [],
+                      "disableNfDomain": false
                     }
                   ],
                   "runtimeEnvironment": {
                     "REPLICA_NUMBER": "0",
                     "ORDERED_REPLICAS": "tb-single",
                     "TOTAL_REPLICAS": "1"
-                  }
-                }
+                  },
+                  "runtimeFiles": {}
+                },
+                "ref": "tb-single"
+              },
+              {
+                "kind": "Volume",
+                "spec": {
+                  "spec": {
+                    "storageSize": 5120,
+                    "storageClassName": "ssd",
+                    "accessMode": "ReadWriteOnce"
+                  },
+                  "name": "tb-single-data",
+                  "mounts": [
+                    {
+                      "containerMountPath": "/data",
+                      "volumeMountPath": ""
+                    }
+                  ],
+                  "attachedObjects": [
+                    {
+                      "id": "tb-single",
+                      "type": "service"
+                    }
+                  ]
+                },
+                "ref": "tb-single-data"
               },
               {
                 "kind": "CombinedService",
@@ -163,6 +190,7 @@
     }
   },
   "name": "tb-bun",
+  "description": "",
   "options": {
     "autorun": false,
     "concurrencyPolicy": "allow",
@@ -175,6 +203,5 @@
     "branch": "master",
     "filePath": "/northflank-template.json"
   },
-  "description": "",
   "$schema": "https://api.northflank.com/v1/schemas/template"
 }
