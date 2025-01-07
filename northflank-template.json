@@ -32,8 +32,8 @@
                   "secrets": {
                     "variables": {
                       "DATA_FOLDER": "/data",
-                      "TOTAL_REPLICAS": "3",
-                      "ORDERED_REPLICAS": "tb01,tb02,tb03"
+                      "TOTAL_REPLICAS": "1",
+                      "ORDERED_REPLICAS": "tb-single"
                     },
                     "files": {
                       "/init.sh": {
@@ -93,9 +93,7 @@
                     }
                   ],
                   "runtimeEnvironment": {
-                    "REPLICA_NUMBER": "0",
-                    "ORDERED_REPLICAS": "tb-single",
-                    "TOTAL_REPLICAS": "1"
+                    "REPLICA_NUMBER": "0"
                   },
                   "runtimeFiles": {}
                 },
