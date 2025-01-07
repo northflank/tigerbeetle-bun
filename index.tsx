@@ -1,10 +1,26 @@
 const { AccountFilterFlags } = require("tigerbeetle-node");
 const { createClient } = require("tigerbeetle-node");
 const { randomFillSync } = require("crypto");
+const { resolve4 } = require("dns/promises");
+
+const TB_ADDRESSES = process.env.TB_ADDRESS!;
+const TB_PORT = process.env.PORT!;
+
+const hostnames = TB_ADDRESSES.split(",");
+
+const addresses = (await Promise.all(hostnames.map(async (hostname) => {
+  const ip = await resolve4(hostname);
+
+  if (ip.length > 1) {
+    return `${ip[0]}:${TB_PORT}`;
+  }
+
+  return [];
+}))).flatMap((i) => i);
 
 const client = createClient({
     cluster_id: 0n,
-    replica_addresses: [process.env.TB_ADDRESS || "3000"],
+    replica_addresses: addresses,
   });
 
 console.log(client)
