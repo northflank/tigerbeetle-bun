@@ -62,7 +62,7 @@ export function id(): bigint {
     timestamp = idLastTimestamp
   } else {
     idLastTimestamp = timestamp
-    randomFillSync(idLastBuffer as any)
+    randomFillSync(new Uint8Array(idLastBuffer))
   }
 
   const idLastBufferDv = new DataView(idLastBuffer);
